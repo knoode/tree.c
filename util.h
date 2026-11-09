@@ -17,6 +17,7 @@ extern const wchar_t BOX_VERT_LINE;
 extern const wchar_t BOX_HOR_LINE;
 
 
+char *get_directory_name(const char *path, char *buffer, size_t len);
 void print_file(const char *name, bool is_dir, bool is_last, unsigned indent);
 struct dirent *get_next_valid_entry(DIR *dir);
 char *concat_path(const char *pre, const char *post, char *buffer, size_t len);

@@ -1,14 +1,15 @@
 #include "util.h"
 
 #include <stdio.h>
+#include <wchar.h>
 #include <string.h>
 #include <locale.h>
 #include <dirent.h>
 
+
 // TODO: build.sh
 // TODO: More detailed errors
 // TODO: Support for Windows
-// TODO: Print starting directory as first line
 
 
 int walk(const char *path, unsigned indent);
@@ -16,16 +17,26 @@ int walk(const char *path, unsigned indent);
 
 int main(int argc, char *argv[])
 {
-    setlocale(LC_CTYPE, "");
-
     const char *path = ".";  // default path is current
 
+    setlocale(LC_CTYPE, "");
+
+    /* Get first command line argument */
     if (argc == 2) {
         path = argv[1];
     } else if (argc > 2) {
-        puts("usage: ./tree [DIRECTORY]");
+        wprintf(L"usage: ./tree [DIRECTORY]\n");
         return 1;
     }
+
+    /* Print target directory name */
+    char dir_name[NAME_MAX];
+
+    if (get_directory_name(path, dir_name, sizeof(dir_name)) == NULL) {
+        return 1;
+    }
+
+    wprintf(BOLD_CYAN L"%s\n" RESET, dir_name);
 
     int err = walk(path, 0);
 

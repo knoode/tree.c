@@ -14,6 +14,20 @@ const wchar_t BOX_VERT_LINE = 0x2502;
 const wchar_t BOX_HOR_LINE = 0x2500;
 
 
+char *get_directory_name(const char *path, char *buffer, size_t len)
+{
+    char abs_path[PATH_MAX];
+
+    if (realpath(path, abs_path) == NULL) {
+        perror("realpath");
+        return NULL;
+    }
+
+    strncpy(buffer, strrchr(abs_path, '/') + 1, len);
+    return buffer;
+}
+
+
 void print_file(const char *name, bool is_dir, bool is_last, unsigned indent)
 {
     if (indent > 0) {
@@ -73,15 +87,15 @@ char *concat_path(const char *pre, const char *post, char *buffer, size_t len)
         }
     }
 
-    int pre_len = strlen(pre) - n_slashes;
-    char *no_slashes = (char*)malloc(pre_len + 1);
+    int no_slash_len = strlen(pre) - n_slashes;
+    char *no_slashes = (char*)malloc(no_slash_len + 1);
 
     if (!no_slashes) {
         return NULL;
     }
 
-    strncpy(no_slashes, pre, pre_len);
-    no_slashes[pre_len] = '\0';
+    strncpy(no_slashes, pre, no_slash_len);
+    no_slashes[no_slash_len] = '\0';
     
     snprintf(buffer, len, "%s/%s", no_slashes, post);
     buffer[len - 1] = '\0';
