@@ -61,7 +61,7 @@ struct dirent *get_next_valid_entry(DIR *dir)
 }
 
 
-int concat_path(const char *pre, const char *post, char *buffer, size_t len)
+char *concat_path(const char *pre, const char *post, char *buffer, size_t len)
 {
     int n_slashes = 0;
 
@@ -73,23 +73,20 @@ int concat_path(const char *pre, const char *post, char *buffer, size_t len)
         }
     }
 
-    if (n_slashes == 0) {
-        snprintf(buffer, len, "%s/%s", pre, post);
-    } else {
-        int new_len = strlen(pre) - (n_slashes - 1);
-        char *no_trailing = (char*)malloc(new_len + 1);
+    int pre_len = strlen(pre) - n_slashes;
+    char *no_slashes = (char*)malloc(pre_len + 1);
 
-        if (!no_trailing) {
-            perror("malloc");
-            return 1;
-        }
-
-        strncpy(no_trailing, pre, new_len);
-        no_trailing[new_len] = '\0';
-        
-        snprintf(buffer, len, "%s%s", no_trailing, post);
-        buffer[len - 1] = '\0';
+    if (!no_slashes) {
+        return NULL;
     }
 
-    return 0;
+    strncpy(no_slashes, pre, pre_len);
+    no_slashes[pre_len] = '\0';
+    
+    snprintf(buffer, len, "%s/%s", no_slashes, post);
+    buffer[len - 1] = '\0';
+
+    free(no_slashes);
+
+    return buffer;
 }

@@ -5,9 +5,9 @@
 #include <locale.h>
 #include <dirent.h>
 
+// TODO: build.sh
 // TODO: More detailed errors
 // TODO: Support for Windows
-// TODO: Coloring for directories
 // TODO: Print starting directory as first line
 
 
@@ -58,7 +58,12 @@ int walk(const char *path, unsigned indent)
             size_t len = strlen(path) + strlen(filename) + 2;
             char new_path[len];
 
-            concat_path(path, filename, new_path, len);
+            char *err = concat_path(path, filename, new_path, len);
+            
+            if (!err) {
+                perror("malloc");
+                return 1;
+            }
 
             walk(new_path, indent + 1);
         }
